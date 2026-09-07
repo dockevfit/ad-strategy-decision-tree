@@ -1,0 +1,1690 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ad Strategy Decision Tree v3 | CSM Playbook</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    background: #0a0a0a;
+    color: #e5e5e5;
+    line-height: 1.6;
+  }
+  .header {
+    background: #000;
+    border-bottom: 1px solid #1a1a1a;
+    padding: 40px 24px 32px;
+    text-align: center;
+  }
+  .header h1 {
+    font-size: 28px;
+    font-weight: 800;
+    letter-spacing: -0.5px;
+    color: #fff;
+    margin-bottom: 8px;
+  }
+  .header p {
+    font-size: 14px;
+    color: #888;
+    max-width: 640px;
+    margin: 0 auto;
+  }
+  .header .badge {
+    display: inline-block;
+    background: #1a1a1a;
+    border: 1px solid #333;
+    color: #aaa;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    padding: 4px 12px;
+    border-radius: 4px;
+    margin-bottom: 16px;
+  }
+  .container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 40px 24px 80px;
+  }
+  .section-title {
+    font-size: 22px;
+    font-weight: 800;
+    color: #fff;
+    margin-bottom: 8px;
+    letter-spacing: -0.3px;
+  }
+  .section-sub {
+    font-size: 13px;
+    color: #777;
+    margin-bottom: 28px;
+  }
+
+  /* ===== TIER TABLE ===== */
+  .tier-table-wrap {
+    overflow-x: auto;
+    margin-bottom: 40px;
+    border-radius: 12px;
+    border: 1px solid #222;
+  }
+  .tier-table {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 900px;
+  }
+  .tier-table th {
+    background: #111;
+    color: #888;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    padding: 14px 16px;
+    text-align: left;
+    border-bottom: 2px solid #333;
+    white-space: nowrap;
+  }
+  .tier-table td {
+    padding: 16px;
+    font-size: 13px;
+    color: #ccc;
+    border-bottom: 1px solid #1a1a1a;
+    vertical-align: top;
+  }
+  .tier-table tr:hover td { background: #0f0f0f; }
+  .tier-table .tier-label {
+    font-weight: 700;
+    color: #fff;
+    font-size: 14px;
+    white-space: nowrap;
+  }
+  .tier-table .strat-cell { font-weight: 700; font-size: 13px; }
+  .strat-a { color: #4ade80; }
+  .strat-b { color: #60a5fa; }
+  .strat-c { color: #f87171; }
+  .strat-ab { color: #c084fc; }
+  .strat-transition { color: #fbbf24; }
+  .adset-count {
+    display: inline-block;
+    background: #1a1a1a;
+    border: 1px solid #333;
+    border-radius: 6px;
+    padding: 4px 10px;
+    font-size: 12px;
+    font-weight: 700;
+    color: #fff;
+    white-space: nowrap;
+  }
+  .adset-reason {
+    font-size: 12px;
+    color: #888;
+    line-height: 1.6;
+    margin-top: 6px;
+  }
+  .optional-tag {
+    display: inline-block;
+    background: #1a1a0a;
+    border: 1px solid #3a3a1a;
+    border-radius: 4px;
+    padding: 2px 8px;
+    font-size: 10px;
+    font-weight: 600;
+    color: #ca8a04;
+    margin-left: 6px;
+    white-space: nowrap;
+  }
+
+  /* ===== FLOWCHART ===== */
+  .flowchart {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0;
+    margin-bottom: 60px;
+    overflow-x: auto;
+    padding: 20px 0;
+  }
+  .node {
+    position: relative;
+    text-align: center;
+    transition: all 0.2s;
+  }
+  .node-start {
+    background: #fff;
+    color: #000;
+    font-weight: 700;
+    font-size: 15px;
+    padding: 14px 32px;
+    border-radius: 8px;
+    min-width: 280px;
+  }
+  .node-question {
+    background: #1a1a1a;
+    border: 2px solid #444;
+    color: #fff;
+    font-weight: 600;
+    font-size: 14px;
+    padding: 16px 24px;
+    border-radius: 8px;
+    min-width: 260px;
+    max-width: 340px;
+  }
+  .node-question .q-label {
+    display: block;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: #666;
+    margin-bottom: 6px;
+  }
+  .arrow-down {
+    width: 2px;
+    height: 28px;
+    background: #333;
+    margin: 0 auto;
+    position: relative;
+  }
+  .arrow-down::after {
+    content: '';
+    position: absolute;
+    bottom: -1px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 0;
+    height: 0;
+    border-left: 6px solid transparent;
+    border-right: 6px solid transparent;
+    border-top: 8px solid #333;
+  }
+  .branch-row {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    flex-wrap: wrap;
+    width: 100%;
+  }
+  .branch-col {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-width: 130px;
+  }
+  .branch-label {
+    background: #222;
+    border: 1px solid #3a3a3a;
+    color: #ccc;
+    font-size: 11px;
+    font-weight: 600;
+    padding: 6px 10px;
+    border-radius: 6px;
+    white-space: nowrap;
+  }
+  .branch-line {
+    width: 2px;
+    height: 20px;
+    background: #3a3a3a;
+  }
+  .outcome {
+    border-radius: 8px;
+    padding: 12px 14px;
+    text-align: center;
+    min-width: 130px;
+    max-width: 170px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .outcome:hover { transform: translateY(-2px); }
+  .outcome-a { background: #0d1f0d; border: 2px solid #1a5c1a; }
+  .outcome-b { background: #0d1a2a; border: 2px solid #1a4a8a; }
+  .outcome-c { background: #2a0d0d; border: 2px solid #8a1a1a; }
+  .outcome-ab { background: #1a0d2a; border: 2px solid #5b1a8a; }
+  .outcome-transition { background: #1a160d; border: 2px solid #8a6a1a; }
+  .outcome .strat-tag {
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    margin-bottom: 4px;
+  }
+  .outcome-a .strat-tag { color: #4ade80; }
+  .outcome-b .strat-tag { color: #60a5fa; }
+  .outcome-c .strat-tag { color: #f87171; }
+  .outcome-ab .strat-tag { color: #c084fc; }
+  .outcome-transition .strat-tag { color: #fbbf24; }
+  .outcome .strat-name {
+    font-size: 12px;
+    font-weight: 700;
+    color: #fff;
+    margin-bottom: 3px;
+  }
+  .outcome .strat-adsets {
+    font-size: 10px;
+    color: #999;
+  }
+
+  /* ===== STRATEGY CARDS ===== */
+  .strategy-card {
+    background: #111;
+    border: 1px solid #222;
+    border-radius: 12px;
+    padding: 28px;
+    margin-bottom: 24px;
+  }
+  .strategy-card.strategy-a { border-left: 4px solid #1a5c1a; }
+  .strategy-card.strategy-b { border-left: 4px solid #1a4a8a; }
+  .strategy-card.strategy-c { border-left: 4px solid #8a1a1a; }
+  .strategy-card h3 {
+    font-size: 18px;
+    font-weight: 700;
+    color: #fff;
+    margin-bottom: 4px;
+  }
+  .strategy-card .when-to-use {
+    font-size: 13px;
+    color: #888;
+    margin-bottom: 20px;
+  }
+  .strategy-card .when-to-use strong { color: #ccc; }
+  .spec-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-bottom: 20px;
+  }
+  .spec-item {
+    background: #0a0a0a;
+    border: 1px solid #1a1a1a;
+    border-radius: 8px;
+    padding: 14px 16px;
+  }
+  .spec-item .spec-label {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: #555;
+    margin-bottom: 4px;
+  }
+  .spec-item .spec-value {
+    font-size: 14px;
+    color: #e5e5e5;
+    font-weight: 500;
+  }
+  .setup-list { list-style: none; padding: 0; }
+  .setup-list li {
+    font-size: 13px;
+    color: #bbb;
+    padding: 8px 0;
+    border-bottom: 1px solid #1a1a1a;
+    padding-left: 24px;
+    position: relative;
+  }
+  .setup-list li:last-child { border-bottom: none; }
+  .setup-list li::before {
+    content: '>';
+    position: absolute;
+    left: 0;
+    color: #555;
+    font-weight: 700;
+  }
+  .warning-box {
+    background: #1a1000;
+    border: 1px solid #3a2a00;
+    border-radius: 8px;
+    padding: 14px 16px;
+    margin-top: 16px;
+    font-size: 12px;
+    color: #cc9900;
+  }
+  .warning-box strong { color: #ffcc00; }
+
+  /* ===== DYNAMIC CREATIVE ADD-ON BOX ===== */
+  .dc-addon-box {
+    background: #0d0d1a;
+    border: 1px solid #1a1a3a;
+    border-left: 4px solid #4a4a8a;
+    border-radius: 8px;
+    padding: 16px 20px;
+    margin: 16px 0;
+  }
+  .dc-addon-box h4 {
+    font-size: 14px;
+    font-weight: 700;
+    color: #a5a5ff;
+    margin-bottom: 8px;
+  }
+  .dc-addon-box p {
+    font-size: 12px;
+    color: #888;
+    line-height: 1.7;
+  }
+  .dc-addon-box p strong { color: #ccc; }
+
+  /* ===== AD SET TABLE ===== */
+  .adset-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 24px;
+  }
+  .adset-table th {
+    background: #111;
+    color: #888;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    padding: 12px 16px;
+    text-align: left;
+    border-bottom: 2px solid #333;
+  }
+  .adset-table td {
+    padding: 14px 16px;
+    font-size: 13px;
+    color: #ccc;
+    border-bottom: 1px solid #1a1a1a;
+    vertical-align: top;
+  }
+  .adset-table tr:hover td { background: #0f0f0f; }
+
+  /* ===== CONVERSION EVENTS ===== */
+  .conv-intro {
+    background: #111;
+    border: 1px solid #222;
+    border-radius: 12px;
+    padding: 28px;
+    margin-bottom: 24px;
+  }
+  .conv-intro h3 {
+    font-size: 18px;
+    font-weight: 700;
+    color: #fff;
+    margin-bottom: 12px;
+  }
+  .conv-intro p {
+    font-size: 13px;
+    color: #aaa;
+    margin-bottom: 12px;
+    line-height: 1.7;
+  }
+  .conv-intro p strong { color: #ddd; }
+  .conv-intro .key-point {
+    background: #0d1a0d;
+    border: 1px solid #1a3a1a;
+    border-radius: 8px;
+    padding: 14px 16px;
+    margin-top: 16px;
+    font-size: 13px;
+    color: #8fcf8f;
+  }
+  .conv-intro .key-point strong { color: #4ade80; }
+  .conv-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 16px;
+    margin-bottom: 24px;
+  }
+  .conv-card {
+    background: #111;
+    border: 1px solid #222;
+    border-radius: 10px;
+    padding: 20px;
+  }
+  .conv-card .conv-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 10px;
+    gap: 10px;
+  }
+  .conv-card .conv-funnel {
+    font-size: 15px;
+    font-weight: 700;
+    color: #fff;
+  }
+  .conv-card .conv-event {
+    background: #1a1a1a;
+    border: 1px solid #333;
+    border-radius: 4px;
+    padding: 3px 10px;
+    font-size: 11px;
+    font-weight: 600;
+    color: #60a5fa;
+    white-space: nowrap;
+  }
+  .conv-card .conv-desc {
+    font-size: 12px;
+    color: #999;
+    line-height: 1.6;
+    margin-bottom: 10px;
+  }
+  .conv-card .conv-detail {
+    font-size: 11px;
+    color: #777;
+    padding-top: 10px;
+    border-top: 1px solid #1a1a1a;
+  }
+  .conv-card .conv-detail strong { color: #ccc; }
+
+  /* ===== COST PER CALL BENCHMARKS ===== */
+  .cpa-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 24px;
+  }
+  .cpa-table th {
+    background: #111;
+    color: #888;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    padding: 12px 16px;
+    text-align: left;
+    border-bottom: 2px solid #333;
+  }
+  .cpa-table td {
+    padding: 14px 16px;
+    font-size: 13px;
+    color: #ccc;
+    border-bottom: 1px solid #1a1a1a;
+    vertical-align: top;
+  }
+  .cpa-table tr:hover td { background: #0f0f0f; }
+  .cpa-table .cpa-funnel {
+    font-weight: 700;
+    color: #fff;
+    white-space: nowrap;
+  }
+  .cpa-table .cpa-range {
+    font-weight: 700;
+    font-size: 14px;
+  }
+  .cpa-good { color: #4ade80; }
+  .cpa-ok { color: #fbbf24; }
+  .cpa-bad { color: #f87171; }
+  .cpa-table .cpa-warm { color: #60a5fa; font-weight: 600; }
+
+  /* ===== TRANSITION PROTOCOL ===== */
+  .transition-card {
+    background: #111;
+    border: 1px solid #222;
+    border-radius: 12px;
+    padding: 24px;
+    margin-bottom: 20px;
+  }
+  .transition-card .trans-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 16px;
+  }
+  .transition-card .trans-arrow {
+    font-size: 20px;
+    font-weight: 800;
+    color: #555;
+  }
+  .transition-card .trans-from {
+    font-size: 13px;
+    font-weight: 600;
+    padding: 4px 12px;
+    border-radius: 6px;
+  }
+  .transition-card .trans-to {
+    font-size: 13px;
+    font-weight: 600;
+    padding: 4px 12px;
+    border-radius: 6px;
+  }
+  .trans-from-a { background: #0d1f0d; border: 1px solid #1a5c1a; color: #4ade80; }
+  .trans-to-b { background: #0d1a2a; border: 1px solid #1a4a8a; color: #60a5fa; }
+  .trans-from-b { background: #0d1a2a; border: 1px solid #1a4a8a; color: #60a5fa; }
+  .trans-to-c { background: #2a0d0d; border: 1px solid #8a1a1a; color: #f87171; }
+  .trans-from-ab { background: #1a0d2a; border: 1px solid #5b1a8a; color: #c084fc; }
+  .trans-to-bc { background: #1a0d2a; border: 1px solid #5b1a8a; color: #c084fc; }
+  .transition-card .trans-body { font-size: 13px; color: #bbb; line-height: 1.7; }
+  .transition-card .trans-body strong { color: #ddd; }
+  .transition-card .trans-signal {
+    background: #0d1a0d;
+    border: 1px solid #1a3a1a;
+    border-radius: 8px;
+    padding: 12px 16px;
+    margin: 12px 0;
+    font-size: 12px;
+    color: #8fcf8f;
+  }
+  .transition-card .trans-signal strong { color: #4ade80; }
+  .transition-card .trans-steps {
+    list-style: none;
+    padding: 0;
+    margin-top: 12px;
+  }
+  .transition-card .trans-steps li {
+    font-size: 12px;
+    color: #aaa;
+    padding: 6px 0;
+    padding-left: 20px;
+    position: relative;
+  }
+  .transition-card .trans-steps li::before {
+    content: '>';
+    position: absolute;
+    left: 0;
+    color: #555;
+    font-weight: 700;
+  }
+  .transition-card .trans-warning {
+    background: #1a1000;
+    border: 1px solid #3a2a00;
+    border-radius: 8px;
+    padding: 10px 14px;
+    margin-top: 12px;
+    font-size: 11px;
+    color: #cc9900;
+  }
+  .transition-card .trans-warning strong { color: #ffcc00; }
+
+  /* ===== TRUST MODIFIER ===== */
+  .trust-box {
+    background: #111;
+    border: 1px solid #222;
+    border-left: 4px solid #666;
+    border-radius: 10px;
+    padding: 24px;
+    margin-bottom: 24px;
+  }
+  .trust-box h4 {
+    font-size: 15px;
+    font-weight: 700;
+    color: #fff;
+    margin-bottom: 12px;
+  }
+  .trust-cols {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+  }
+  .trust-col h5 {
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 8px;
+  }
+  .trust-col.high h5 { color: #4ade80; }
+  .trust-col.low h5 { color: #f87171; }
+  .trust-col p {
+    font-size: 12px;
+    color: #999;
+    line-height: 1.7;
+  }
+
+  /* ===== CHEAT SHEET ===== */
+  .cheat-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 16px;
+    margin-bottom: 24px;
+  }
+  .cheat-card {
+    background: #111;
+    border: 1px solid #222;
+    border-radius: 10px;
+    padding: 20px;
+  }
+  .cheat-card .cheat-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 12px;
+  }
+  .cheat-card .cheat-tier {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: #555;
+  }
+  .cheat-card .cheat-strat {
+    font-size: 15px;
+    font-weight: 700;
+    color: #fff;
+  }
+  .cheat-card .cheat-body {
+    font-size: 12px;
+    color: #999;
+    line-height: 1.7;
+  }
+  .cheat-card .cheat-body strong { color: #ddd; }
+
+  .footer-note {
+    text-align: center;
+    font-size: 12px;
+    color: #444;
+    margin-top: 40px;
+    padding-top: 24px;
+    border-top: 1px solid #1a1a1a;
+  }
+  @media (max-width: 768px) {
+    .spec-grid { grid-template-columns: 1fr; }
+    .trust-cols { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="badge">CSM Decision Playbook v3</div>
+  <h1>Ad Strategy Decision Tree</h1>
+  <p>For high-ticket fitness offers. Eight spend tiers, Dynamic Creative as optional CBO add-on, cost-per-call benchmarks per funnel type, and full transition protocol. Use this on client calls to determine CBO, ABO + Individual, or Thunderdome.</p>
+</div>
+
+<div class="container">
+
+  <!-- ===== TIER OVERVIEW ===== -->
+  <h2 class="section-title">Spend Tier Overview</h2>
+  <p class="section-sub">Eight tiers. Each maps to a strategy, ad set count, and reasoning. Dynamic Creative is now an optional add-on to CBO, not a mandatory pairing.</p>
+
+  <div class="tier-table-wrap">
+    <table class="tier-table">
+      <thead>
+        <tr>
+          <th>Daily Spend</th>
+          <th>Strategy</th>
+          <th>Ad Sets</th>
+          <th>Why This Structure</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="tier-label">$30/day</td>
+          <td class="strat-cell strat-a">CBO</td>
+          <td><span class="adset-count">1 ad set</span><span class="optional-tag">DC optional</span><div class="adset-reason">$30 split across 2 ad sets = $15 each. Below the threshold where the algorithm can learn. One broad ad set, concentrated signal.</div></td>
+          <td>Bare minimum viable spend. One campaign, one broad ad set. Dynamic Creative is optional here. You are in pure data collection mode. Do not touch for 72 hours minimum.</td>
+        </tr>
+        <tr>
+          <td class="tier-label">$50/day</td>
+          <td class="strat-cell strat-a">CBO</td>
+          <td><span class="adset-count">1 ad set</span><span class="optional-tag">DC optional</span><div class="adset-reason">Still too thin to split. $50 across 2 = $25 each. Keep it consolidated so the pixel gets every signal from one audience.</div></td>
+          <td>Same logic as $30. One broad ad set. Dynamic Creative optional. If you add it, load 3-5 videos and 5 headlines. If you skip it, load individual ads but keep them in one ad set.</td>
+        </tr>
+        <tr>
+          <td class="tier-label">Under $100/day</td>
+          <td class="strat-cell strat-a">CBO</td>
+          <td><span class="adset-count">1 ad set</span><span class="optional-tag">DC optional</span><div class="adset-reason">$100/day is the minimum viable spend for a single campaign. Below that, pure data acquisition. Default to 1 ad set.</div></td>
+          <td>Still consolidating. Dynamic Creative optional. You can justify a second ad set at $80-100 if testing a distinct targeting angle, but the default is 1. Do not fragment below this.</td>
+        </tr>
+        <tr>
+          <td class="tier-label">$100 to $300/day</td>
+          <td class="strat-cell strat-ab">CBO or ABO</td>
+          <td><span class="adset-count">2-3 ad sets</span><span class="optional-tag">DC optional</span><div class="adset-reason">Above $100/day you are past the borderline stage. You can now split between multiple ad sets. 2-3 ad sets at $100-300/day gives $50-150 per ad set. Viable.</div></td>
+          <td>This is where splitting becomes available. You can run CBO with 2-3 ad sets and let the platform distribute, or switch to ABO to control budget distribution manually. Dynamic Creative is optional in either setup. If conversion volume is under 10/week, prefer CBO. If 10+ conversions/week, ABO gives you control.</td>
+        </tr>
+        <tr>
+          <td class="tier-label">$300 to $1K/day</td>
+          <td class="strat-cell strat-ab">A or B (transition zone)</td>
+          <td><span class="adset-count">2-3 ad sets</span><div class="adset-reason">If on ABO: 2 ad sets (broad + interest) if under 10 convos/week. 3 ad sets (broad + interest + lookalike) if 10+ convos/week. Lookalike needs purchaser data.</div></td>
+          <td>Transition zone. If under 10 conversions per week, stay on CBO. If 10+ conversions with proven hooks, move to ABO + Individual Ads. Conversion volume is the tiebreaker, not spend.</td>
+        </tr>
+        <tr>
+          <td class="tier-label">$1K to $3K/day</td>
+          <td class="strat-cell strat-b">ABO + Individual (scaling) or Thunderdome (testing)</td>
+          <td><span class="adset-count">3 ad sets + warm</span><div class="adset-reason">3 cold ad sets (broad, interest stack, lookalike) + 1 separate warm campaign. If Thunderdome for testing, that is a separate campaign with 15-30+ ad sets at 1 ad each.</div></td>
+          <td>Full scaling structure. ABO gives you budget distribution control. 3 cold ad sets with 25-30 individual ads each. Separate warm campaign. If testing mode, run Thunderdome.</td>
+        </tr>
+        <tr>
+          <td class="tier-label">$3K+/day</td>
+          <td class="strat-cell strat-ab">B + C: ABO Scale + Thunderdome Test</td>
+          <td><span class="adset-count">3+ per campaign, multiple campaigns</span><div class="adset-reason">ABO scaling campaign with 3+ ad sets. Thunderdome testing campaign running in parallel with 15-30+ ad sets at 1 ad each. Split by funnel type or audience angle into separate campaigns.</div></td>
+          <td>Run both in parallel. ABO scales proven winners. Thunderdome feeds new creatives. At this spend you have enough budget to test aggressively while maintaining stable scaling campaigns.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- ===== DYNAMIC CREATIVE EXPLAINER ===== -->
+  <div class="dc-addon-box">
+    <h4>Dynamic Creative: Optional Add-On to CBO</h4>
+    <p>Dynamic Creative is not a strategy by itself. It is an optional toggle you can add to a CBO campaign. When enabled, you upload individual assets (3-5 videos, 5 headlines, 5 body copy) and the platform mixes and matches them into combinations. The algorithm finds which combinations perform best and prioritizes them.</p>
+    <p style="margin-top: 8px;"><strong>When to add it:</strong> Use Dynamic Creative when you are in data collection mode and want the platform to find winning combinations for you. It maximizes testing throughput from a single ad set.</p>
+    <p style="margin-top: 8px;"><strong>When to skip it:</strong> If you have proven creatives and want to control which specific ads run, use individual ads instead. Dynamic Creative gives the platform control over combinations. Individual ads give you control.</p>
+    <p style="margin-top: 8px;"><strong>Never use Dynamic Creative during low-trust periods.</strong> The platform's auto-enhancement toggles that come with Dynamic Creative can alter your creative without consent. During low trust, switch to individual ads and turn all enhancement toggles off.</p>
+  </div>
+
+  <!-- ===== FLOWCHART ===== -->
+  <h2 class="section-title">Decision Flowchart</h2>
+  <p class="section-sub">Walk through top to bottom. Spend is the entry point. Above $100/day, splitting and ABO become available. Conversion volume is the tiebreaker in the transition tiers.</p>
+
+  <div class="flowchart">
+    <div class="node node-start">CLIENT ONBOARDING / ACCOUNT REVIEW</div>
+    <div class="arrow-down"></div>
+    <div class="node node-question">
+      <span class="q-label">Step 1</span>
+      What is the client's current daily ad spend?
+    </div>
+    <div class="arrow-down"></div>
+
+    <div class="branch-row">
+      <!-- $30 -->
+      <div class="branch-col">
+        <div class="branch-label">$30/day</div>
+        <div class="branch-line"></div>
+        <div class="outcome outcome-a" onclick="document.getElementById('strat-a').scrollIntoView({behavior:'smooth'})">
+          <div class="strat-tag">Strategy A</div>
+          <div class="strat-name">CBO</div>
+          <div class="strat-adsets">1 ad set | DC optional</div>
+        </div>
+      </div>
+      <!-- $50 -->
+      <div class="branch-col">
+        <div class="branch-label">$50/day</div>
+        <div class="branch-line"></div>
+        <div class="outcome outcome-a" onclick="document.getElementById('strat-a').scrollIntoView({behavior:'smooth'})">
+          <div class="strat-tag">Strategy A</div>
+          <div class="strat-name">CBO</div>
+          <div class="strat-adsets">1 ad set | DC optional</div>
+        </div>
+      </div>
+      <!-- Under $100 -->
+      <div class="branch-col">
+        <div class="branch-label">Under $100/day</div>
+        <div class="branch-line"></div>
+        <div class="outcome outcome-a" onclick="document.getElementById('strat-a').scrollIntoView({behavior:'smooth'})">
+          <div class="strat-tag">Strategy A</div>
+          <div class="strat-name">CBO</div>
+          <div class="strat-adsets">1 ad set | DC optional</div>
+        </div>
+      </div>
+      <!-- $100-$300 -->
+      <div class="branch-col">
+        <div class="branch-label">$100-$300/day</div>
+        <div class="branch-line"></div>
+        <div class="node node-question" style="min-width:130px;max-width:150px;font-size:12px;padding:12px;">
+          <span class="q-label">Step 2</span>
+          Conversions/week?
+        </div>
+        <div class="branch-line"></div>
+        <div class="branch-row" style="gap:6px;">
+          <div class="branch-col">
+            <div class="branch-label" style="font-size:10px;padding:5px 8px;">Under 10</div>
+            <div class="branch-line"></div>
+            <div class="outcome outcome-a" onclick="document.getElementById('strat-a').scrollIntoView({behavior:'smooth'})">
+              <div class="strat-tag">Strategy A</div>
+              <div class="strat-name">CBO</div>
+              <div class="strat-adsets">2-3 ad sets</div>
+            </div>
+          </div>
+          <div class="branch-col">
+            <div class="branch-label" style="font-size:10px;padding:5px 8px;">10+</div>
+            <div class="branch-line"></div>
+            <div class="outcome outcome-ab" onclick="document.getElementById('strat-b').scrollIntoView({behavior:'smooth'})">
+              <div class="strat-tag">Strategy A or B</div>
+              <div class="strat-name">CBO or ABO</div>
+              <div class="strat-adsets">2-3 ad sets</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- $300-$1K -->
+      <div class="branch-col">
+        <div class="branch-label">$300-$1K/day</div>
+        <div class="branch-line"></div>
+        <div class="node node-question" style="min-width:130px;max-width:150px;font-size:12px;padding:12px;">
+          <span class="q-label">Step 2</span>
+          Conversions/week?
+        </div>
+        <div class="branch-line"></div>
+        <div class="branch-row" style="gap:6px;">
+          <div class="branch-col">
+            <div class="branch-label" style="font-size:10px;padding:5px 8px;">Under 10</div>
+            <div class="branch-line"></div>
+            <div class="outcome outcome-a" onclick="document.getElementById('strat-a').scrollIntoView({behavior:'smooth'})">
+              <div class="strat-tag">Strategy A</div>
+              <div class="strat-name">CBO</div>
+              <div class="strat-adsets">2 ad sets</div>
+            </div>
+          </div>
+          <div class="branch-col">
+            <div class="branch-label" style="font-size:10px;padding:5px 8px;">10+</div>
+            <div class="branch-line"></div>
+            <div class="node node-question" style="min-width:110px;max-width:130px;font-size:11px;padding:10px;">
+              <span class="q-label">Step 3</span>
+              Testing or Scaling?
+            </div>
+            <div class="branch-line"></div>
+            <div class="branch-row" style="gap:5px;">
+              <div class="branch-col">
+                <div class="branch-label" style="font-size:9px;padding:4px 6px;">Testing</div>
+                <div class="branch-line"></div>
+                <div class="outcome outcome-a" onclick="document.getElementById('strat-a').scrollIntoView({behavior:'smooth'})">
+                  <div class="strat-tag">Strategy A</div>
+                  <div class="strat-name">CBO</div>
+                </div>
+              </div>
+              <div class="branch-col">
+                <div class="branch-label" style="font-size:9px;padding:4px 6px;">Scaling</div>
+                <div class="branch-line"></div>
+                <div class="outcome outcome-b" onclick="document.getElementById('strat-b').scrollIntoView({behavior:'smooth'})">
+                  <div class="strat-tag">Strategy B</div>
+                  <div class="strat-name">ABO</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- $1K-$3K -->
+      <div class="branch-col">
+        <div class="branch-label">$1K-$3K/day</div>
+        <div class="branch-line"></div>
+        <div class="node node-question" style="min-width:130px;max-width:150px;font-size:12px;padding:12px;">
+          <span class="q-label">Step 3</span>
+          Testing or Scaling?
+        </div>
+        <div class="branch-line"></div>
+        <div class="branch-row" style="gap:6px;">
+          <div class="branch-col">
+            <div class="branch-label" style="font-size:10px;padding:5px 8px;">Testing</div>
+            <div class="branch-line"></div>
+            <div class="outcome outcome-c" onclick="document.getElementById('strat-c').scrollIntoView({behavior:'smooth'})">
+              <div class="strat-tag">Strategy C</div>
+              <div class="strat-name">Thunderdome</div>
+              <div class="strat-adsets">15-30+ ad sets</div>
+            </div>
+          </div>
+          <div class="branch-col">
+            <div class="branch-label" style="font-size:10px;padding:5px 8px;">Scaling</div>
+            <div class="branch-line"></div>
+            <div class="outcome outcome-b" onclick="document.getElementById('strat-b').scrollIntoView({behavior:'smooth'})">
+              <div class="strat-tag">Strategy B</div>
+              <div class="strat-name">ABO + Individual</div>
+              <div class="strat-adsets">3 + warm</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- $3K+ -->
+      <div class="branch-col">
+        <div class="branch-label">$3K+/day</div>
+        <div class="branch-line"></div>
+        <div class="node node-question" style="min-width:130px;max-width:150px;font-size:12px;padding:12px;">
+          <span class="q-label">Step 3</span>
+          Testing or Scaling?
+        </div>
+        <div class="branch-line"></div>
+        <div class="branch-row" style="gap:6px;">
+          <div class="branch-col">
+            <div class="branch-label" style="font-size:10px;padding:5px 8px;">Testing</div>
+            <div class="branch-line"></div>
+            <div class="outcome outcome-c" onclick="document.getElementById('strat-c').scrollIntoView({behavior:'smooth'})">
+              <div class="strat-tag">Strategy C</div>
+              <div class="strat-name">Thunderdome</div>
+              <div class="strat-adsets">15-30+ ad sets</div>
+            </div>
+          </div>
+          <div class="branch-col">
+            <div class="branch-label" style="font-size:10px;padding:5px 8px;">Scaling</div>
+            <div class="branch-line"></div>
+            <div class="outcome outcome-ab" onclick="document.getElementById('strat-b').scrollIntoView({behavior:'smooth'})">
+              <div class="strat-tag">Strategy B+C</div>
+              <div class="strat-name">ABO + Thunderdome</div>
+              <div class="strat-adsets">3+ + 15-30+</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== AD SET COUNT TABLE ===== -->
+  <h2 class="section-title">Why These Ad Set Counts</h2>
+  <p class="section-sub">The ad set count at each tier is not arbitrary. It is based on how much signal the algorithm needs and how much budget each ad set receives after splitting.</p>
+
+  <table class="adset-table">
+    <thead>
+      <tr>
+        <th>Spend Tier</th>
+        <th>Ad Sets</th>
+        <th>Budget Per Ad Set</th>
+        <th>Why This Count</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td style="font-weight:700;color:#fff;">$30/day</td>
+        <td>1</td>
+        <td>$30/day</td>
+        <td>Concentrated signal. Splitting to 2 means $15 each, below the threshold where the platform can learn anything useful. One ad set, let it rip.</td>
+      </tr>
+      <tr>
+        <td style="font-weight:700;color:#fff;">$50/day</td>
+        <td>1</td>
+        <td>$50/day</td>
+        <td>Same logic. $50 split across 2 is $25 each. Still too thin. Keep it consolidated so the pixel gets every signal from one audience.</td>
+      </tr>
+      <tr>
+        <td style="font-weight:700;color:#fff;">Under $100/day</td>
+        <td>1</td>
+        <td>$50-100/day</td>
+        <td>$100/day is the minimum viable spend for a single campaign. Below that, pure data acquisition. Default to 1. Split only if testing a distinct targeting angle.</td>
+      </tr>
+      <tr>
+        <td style="font-weight:700;color:#fff;">$100-$300/day</td>
+        <td>2-3</td>
+        <td>$50-150/day</td>
+        <td>Above $100/day you are past the borderline stage. You can now split between multiple ad sets. 2 ad sets at $150/day each gives $75 per ad set. 3 ad sets at $300/day gives $100 each. Both viable. ABO becomes available here because each ad set has enough budget to read data independently.</td>
+      </tr>
+      <tr>
+        <td style="font-weight:700;color:#fff;">$300-$1K/day</td>
+        <td>2-3</td>
+        <td>$150-500/day</td>
+        <td>2 ad sets if under 10 conversions/week (broad + interest). 3 ad sets if 10+ conversions/week (broad + interest + lookalike). Lookalike needs purchaser data to build from.</td>
+      </tr>
+      <tr>
+        <td style="font-weight:700;color:#fff;">$1K-$3K/day</td>
+        <td>3 + warm</td>
+        <td>$330-1000/day</td>
+        <td>3 cold ad sets: broad, interest stack, lookalike stack. Plus a separate warm campaign with its own warm audience stack. Each ad set gets enough budget to read data. ABO gives you full budget distribution control.</td>
+      </tr>
+      <tr>
+        <td style="font-weight:700;color:#fff;">$3K+/day</td>
+        <td>3+ per campaign, multiple campaigns</td>
+        <td>$1000+/day</td>
+        <td>ABO scaling campaign with 3+ ad sets. Thunderdome testing campaign with 15-30+ ad sets at 1 ad each for forced distribution. At this spend you can afford to run both in parallel.</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <!-- ===== CONVERSION EVENTS ===== -->
+  <h2 class="section-title" style="margin-top:48px;">Conversion Events Explained</h2>
+  <p class="section-sub">Before a CSM recommends a strategy, they need to understand what conversion event the campaign optimizes around. This is the action the ad platform uses to determine who to show ads to.</p>
+
+  <div class="conv-intro">
+    <h3>What Is a Conversion Event?</h3>
+    <p>A conversion event is the specific action the ad platform optimizes around. When you set up a conversion campaign, you tell the platform: find me more people likely to take THIS action. The platform uses its database of user behavior history to find people statistically probable to do that thing.</p>
+    <p>The event you choose determines who the algorithm targets. If you optimize for <strong>Link Clicks</strong>, you get clickers. If you optimize for <strong>Leads</strong>, you get people likely to fill out a form. If you optimize for <strong>Schedule</strong>, you get people likely to book a call. The event is the signal the algorithm chases.</p>
+    <p>There are two categories. <strong>Standard events</strong> are predefined by the platform: Lead, Complete Registration, Schedule, Purchase, Contact, Submit Form, Find Location, Start Trial. The platform has historical data on every user who has ever taken these actions across all advertisers. <strong>Custom conversions</strong> are defined by you and linked to a specific URL or event. They can be useful but the platform has no historical data on them beyond what your pixel has collected, so optimization is weaker.</p>
+    <div class="key-point">
+      <strong>The rule:</strong> Default to standard events whenever possible. The platform has a gigantic database of all their active users and the actions they have historically taken or not taken. You want to play into that database rather than using a custom conversion where the platform has no historical data beyond what your business has accumulated in isolation. Standard events typically produce a far lower cost per result and a far greater quantity of results.
+    </div>
+  </div>
+
+  <h3 style="font-size:16px;font-weight:700;color:#fff;margin-bottom:16px;">Conversion Events by Funnel Type</h3>
+
+  <div class="conv-cards">
+    <div class="conv-card">
+      <div class="conv-header">
+        <div class="conv-funnel">VSL Call Funnel</div>
+        <div class="conv-event">Schedule</div>
+      </div>
+      <div class="conv-desc">The VSL plays, the prospect fills out an application, then books a call through Calendly. The conversion event is Schedule because that is the action that indicates buying intent.</div>
+      <div class="conv-detail"><strong>Why not Lead:</strong> A lead could be anyone who opts in. Schedule means they actually booked a call. That is the qualified signal. <strong>Attribution:</strong> 7-day click + 1-day view minimum. Sales cycle is longer so data comes in slower.</div>
+    </div>
+    <div class="conv-card">
+      <div class="conv-header">
+        <div class="conv-funnel">Webinar Funnel</div>
+        <div class="conv-event">Registration / Complete Registration</div>
+      </div>
+      <div class="conv-desc">The prospect registers for the webinar. That fires the Registration or Complete Registration standard event. If it is a recurring weekly webinar, you can also optimize for Schedule if the registration includes a calendar hold.</div>
+      <div class="conv-detail"><strong>One-off webinar:</strong> Use Registration with a lifetime budget. <strong>Recurring weekly:</strong> Use Schedule or Complete Registration with daily budget. <strong>Watch:</strong> Show rate is the real bottleneck, not registration CPL.</div>
+    </div>
+    <div class="conv-card">
+      <div class="conv-header">
+        <div class="conv-funnel">3-Day Challenge</div>
+        <div class="conv-event">Registration (with event dates)</div>
+      </div>
+      <div class="conv-desc">The prospect registers for the challenge. Use a lifetime budget so spend paces to the event timeline. Set the event start and end dates in the campaign setup.</div>
+      <div class="conv-detail"><strong>Settings:</strong> Lifetime budget, cost cap, event dates enabled. <strong>Watch for:</strong> Facebook may auto-create a public Event for your challenge. Turn that toggle off if you do not want it.</div>
+    </div>
+    <div class="conv-card">
+      <div class="conv-header">
+        <div class="conv-funnel">Low-Ticket Ascension</div>
+        <div class="conv-event">Purchase</div>
+      </div>
+      <div class="conv-desc">The front-end product is a low-ticket purchase. Optimize for Purchase on the front-end campaign. Then run a separate retargeting campaign for non-buyers, routing them into the high-ticket call funnel with a Schedule event.</div>
+      <div class="conv-detail"><strong>Pixel conditioning:</strong> Critical here. The front-end pixel collects purchaser data. The retargeting pixel fires on Schedule for the high-ticket upsell. Keep these separate. <strong>Do not judge ROAS on front-end alone.</strong></div>
+    </div>
+    <div class="conv-card">
+      <div class="conv-header">
+        <div class="conv-funnel">IG DM / Comment Funnel</div>
+        <div class="conv-event">Engagement or Lead</div>
+      </div>
+      <div class="conv-desc">The prospect comments a keyword or sends a DM. The platform fires Engagement or a custom Lead event when the DM is received. The DM routes through ManyChat into your sales process.</div>
+      <div class="conv-detail"><strong>Problem:</strong> Engagement events produce high volume but low intent. <strong>Fix:</strong> Use bid cap if cost cap is unavailable on Engagement. <strong>Watch:</strong> Cost per qualified call, not cost per DM.</div>
+    </div>
+    <div class="conv-card">
+      <div class="conv-header">
+        <div class="conv-funnel">Book Funnel</div>
+        <div class="conv-event">Purchase (book + shipping)</div>
+      </div>
+      <div class="conv-desc">The prospect buys a physical book plus shipping. Optimize for Purchase. The book purchase is the qualifier. Buyers get routed into the high-ticket backend through a separate retargeting campaign optimizing for Schedule.</div>
+      <div class="conv-detail"><strong>Structure:</strong> Two campaigns. Front-end optimizes for Purchase. Retargeting optimizes for Schedule. <strong>AOV:</strong> Add upsells at checkout to increase order value and liquidate more ad spend on the front end.</div>
+    </div>
+  </div>
+
+  <div class="conv-intro" style="margin-top:0;">
+    <h3 style="font-size:16px;">Standard Events Reference</h3>
+    <p style="font-size:13px;">These are the standard events available on Meta that matter for high-ticket fitness offers:</p>
+    <div class="spec-grid" style="margin-top:16px;">
+      <div class="spec-item"><div class="spec-label">Schedule</div><div class="spec-value">Someone books an appointment or schedules a call. Used for VSL call funnels.</div></div>
+      <div class="spec-item"><div class="spec-label">Lead</div><div class="spec-value">Someone submits a form or provides contact info. Broader than Schedule.</div></div>
+      <div class="spec-item"><div class="spec-label">Complete Registration</div><div class="spec-value">Someone fully completes a registration. Used for webinars and challenges.</div></div>
+      <div class="spec-item"><div class="spec-label">Purchase</div><div class="spec-value">Someone completes a purchase. Used for low-ticket front-end products.</div></div>
+      <div class="spec-item"><div class="spec-label">Contact</div><div class="spec-value">Someone initiates contact via messenger, phone, or message. Used for DM funnels.</div></div>
+      <div class="spec-item"><div class="spec-label">Submit Form</div><div class="spec-value">Someone submits a form with information. Similar to Lead but more specific.</div></div>
+    </div>
+  </div>
+
+  <!-- ===== COST PER CALL BENCHMARKS ===== -->
+  <h2 class="section-title" style="margin-top:48px;">Cost Per Call Benchmarks for Fitness Offers</h2>
+  <p class="section-sub">These are observed ranges for high-ticket fitness offers. Use them as guardrails, not hard targets. Actual CPA depends on offer sophistication, creative quality, audience saturation, and market competition. The goal is to know when something is off, not to hit a specific number.</p>
+
+  <table class="cpa-table">
+    <thead>
+      <tr>
+        <th>Funnel Type</th>
+        <th>Cold CPA Range</th>
+        <th>Warm CPA Range</th>
+        <th>Conversion Event</th>
+        <th>What Good Looks Like</th>
+        <th>Red Flags</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td class="cpa-funnel">VSL Call Funnel</td>
+        <td class="cpa-range cpa-ok">$15 - $45 per qualified call</td>
+        <td class="cpa-warm">$5 - $15 per qualified call</td>
+        <td>Schedule</td>
+        <td>Under $30 cold with 50%+ show rate and 15%+ close rate on calls. Sales cycle is longer so patience matters.</td>
+        <td>CPA above $50 cold with show rate under 40%. That means the creative is attracting the wrong people or the VSL is not qualifying properly.</td>
+      </tr>
+      <tr>
+        <td class="cpa-funnel">Webinar Funnel</td>
+        <td class="cpa-range cpa-ok">$5 - $15 per registration</td>
+        <td class="cpa-warm">$2 - $8 per registration</td>
+        <td>Registration / Complete Registration</td>
+        <td>Under $10 per registration cold. Show rate of 35-45%+ for cold webinars. Close rate on attendees 10-20%.</td>
+        <td>Registration CPA under $5 but show rate under 25%. Cheap registrations that do not show up are worse than expensive ones that do. Watch cost per attendee, not just cost per registration.</td>
+      </tr>
+      <tr>
+        <td class="cpa-funnel">3-Day Challenge</td>
+        <td class="cpa-range cpa-ok">$3 - $12 per registration</td>
+        <td class="cpa-warm">$1 - $5 per registration</td>
+        <td>Registration (event dates)</td>
+        <td>Under $8 per registration. Day 1 to Day 3 retention of 40%+. Challenge funnel is about completion rate, not just registration cost.</td>
+        <td>High registration volume but Day 2 attendance drops below 50%. The challenge content is not holding attention, or the audience is not committed.</td>
+      </tr>
+      <tr>
+        <td class="cpa-funnel">Low-Ticket Ascension</td>
+        <td class="cpa-range cpa-ok">Front-end: CPA below product price</td>
+        <td class="cpa-warm">$10 - $25 per upsell call</td>
+        <td>Purchase (front) + Schedule (retargeting)</td>
+        <td>Front-end CPA below the product price so it self-liquidates. Retargeting CPA for the high-ticket upsell call under $25.</td>
+        <td>Front-end CPA above product price. That means you are paying more to acquire a buyer than they paid you. The front-end is not self-liquidating and you are subsidizing the high-ticket upsell.</td>
+      </tr>
+      <tr>
+        <td class="cpa-funnel">IG DM / Comment Funnel</td>
+        <td class="cpa-range cpa-ok">$2 - $10 per DM</td>
+        <td class="cpa-warm">$15 - $35 per qualified call from DMs</td>
+        <td>Engagement or Lead</td>
+        <td>Cost per DM under $5 with a DM-to-call booking rate of 15%+. The real metric is cost per qualified call, not cost per DM.</td>
+        <td>DM volume is high but DM-to-call rate is under 10%. You are getting tire-kickers, not buyers. The ad is promising something the offer cannot deliver, or the DM conversation is not qualifying.</td>
+      </tr>
+      <tr>
+        <td class="cpa-funnel">Book Funnel</td>
+        <td class="cpa-range cpa-ok">$15 - $35 per book purchaser</td>
+        <td class="cpa-warm">$8 - $20 per book purchaser (warm)</td>
+        <td>Purchase (book) + Schedule (retargeting)</td>
+        <td>CPA below the book price so the front-end self-liquidates. Book buyer to high-ticket call booking rate of 20%+.</td>
+        <td>Book CPA above the book price plus shipping. You are losing money on every book. The book funnel is not viable unless it drives upsells, and the upsell rate will tell you if the book is attracting qualified buyers.</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="dc-addon-box" style="margin-top:0;">
+    <h4>How to Use These Benchmarks</h4>
+    <p>These ranges are for high-ticket fitness offers specifically. The ranges are wide because the actual CPA depends on the offer price point, the creative quality, the audience saturation in the fitness niche, and the market competition at the time of running.</p>
+    <p style="margin-top:8px;"><strong>What to tell clients:</strong> These are guardrails, not targets. If your cold VSL call CPA is at $25, that is solid. If it climbs to $50 and your show rate holds, something changed in the auction or your creative fatigued. If it climbs to $50 and show rate drops, your creative is attracting the wrong people. The CPA number alone does not diagnose the problem. It tells you something is off. The show rate, close rate, and call quality tell you what.</p>
+    <p style="margin-top:8px;"><strong>What moves the CPA:</strong> CPMs (auction competition), link click-through rate (creative quality), opt-in rate (page quality), and the conversion event itself. If your CPA is high, break it down into those components before changing anything. Do not just swap creatives. Find which sub-metric is broken first.</p>
+  </div>
+
+  <!-- ===== TRANSITION PROTOCOL ===== -->
+  <h2 class="section-title" style="margin-top:48px;">Transition Protocol: Moving Between Strategies</h2>
+  <p class="section-sub">When a client's spend or conversion volume changes, they may need to move from one strategy to another. These are the exact signals that trigger each transition and the steps to execute it without breaking the account.</p>
+
+  <!-- Transition 1: A to B -->
+  <div class="transition-card">
+    <div class="trans-header">
+      <span class="trans-from trans-from-a">Strategy A: CBO</span>
+      <span class="trans-arrow">>>></span>
+      <span class="trans-to trans-to-b">Strategy B: ABO + Individual</span>
+    </div>
+    <div class="trans-body">
+      <strong>When this transition fires:</strong> The client has been on CBO long enough to identify proven hooks and their conversion volume has crossed 10+ per week. They are spending $300-$1K/day and have proven hooks from the CBO testing phase. The signal is that CBO is no longer the right structure because you now have enough data to control budget distribution manually and you want to scale proven winners.
+    </div>
+    <div class="trans-signal">
+      <strong>Trigger signals:</strong> 10+ conversions per week for 2+ consecutive weeks. Proven hooks identified from CBO data. Sales team confirms lead quality is consistent. CPMs are stable. You have survey data from buyers on why they bought.
+    </div>
+    <div class="trans-body" style="margin-top:12px;"><strong>Steps to execute:</strong></div>
+    <ul class="trans-steps">
+      <li>Do not touch the existing CBO campaign. Let it keep running while you build the new ABO structure</li>
+      <li>Build the new ABO campaign with 3 cold ad sets: broad, interest stack, lookalike stack</li>
+      <li>Load 25-30 individual ads per ad set using the same 5 headlines and 5 body copy across all ads</li>
+      <li>Set up a separate warm audience campaign with its own warm audience stack</li>
+      <li>Apply cost caps at the ad set level based on the CPA you were achieving in the CBO campaign</li>
+      <li>Let the new ABO campaign run for 72 hours before making any changes</li>
+      <li>Once the ABO campaign is stable and producing calls, pause the old CBO campaign</li>
+      <li>Do not delete the old CBO campaign. Pause it. You may need to reactivate it if the ABO structure underperforms</li>
+    </ul>
+    <div class="trans-warning">
+      <strong>Do not:</strong> Add creatives or ad sets to the existing CBO campaign to turn it into ABO. Adding to a working campaign breaks it. Build a new campaign and transition over.
+    </div>
+  </div>
+
+  <!-- Transition 2: B to C -->
+  <div class="transition-card">
+    <div class="trans-header">
+      <span class="trans-from trans-from-b">Strategy B: ABO + Individual</span>
+      <span class="trans-arrow">>>></span>
+      <span class="trans-to trans-to-c">Strategy C: Thunderdome</span>
+    </div>
+    <div class="trans-body">
+      <strong>When this transition fires:</strong> The client is on ABO + Individual and their creatives are fatiguing. You need to test a new batch of creatives rapidly to find fresh winners. Thunderdome is not a replacement for ABO. It is a testing structure that runs alongside or replaces the testing phase of ABO.
+    </div>
+    <div class="trans-signal">
+      <strong>Trigger signals:</strong> Cost per result climbing over 2+ weeks with no changes to the campaign. CTR dropping. Frequency climbing above 2.0. The same 1-3 ads are absorbing all spend and the rest are getting nothing. You need new winners but the current structure is not testing efficiently.
+    </div>
+    <div class="trans-body" style="margin-top:12px;"><strong>Steps to execute:</strong></div>
+    <ul class="trans-steps">
+      <li>Keep the existing ABO scaling campaign running. Do not pause it</li>
+      <li>Build a new Thunderdome campaign with 15-30+ ad sets, each with 1 ad and its own budget</li>
+      <li>Use broad targeting across all Thunderdome ad sets. Identical audience, different creatives</li>
+      <li>Set 3-second video view exclusions on each ad so prospects rotate through different creatives</li>
+      <li>Judge by leading indicators: CPMs, link CTR, cost per call, call quantity. Then correlate to ROAS</li>
+      <li>Clip losers fast. Any creative above your cost threshold gets cut within 5-7 days</li>
+      <li>Move spend from cut losers toward winners to test their scale ceiling</li>
+      <li>Pull proven winners out of Thunderdome and load them into the ABO scaling campaign as new ads</li>
+      <li>Thunderdome runs continuously as a creative factory. ABO scales what Thunderdome finds</li>
+    </ul>
+    <div class="trans-warning">
+      <strong>Do not:</strong> Run Thunderdome below $1K/day. The budget per ad set will be too thin to read anything. Thunderdome needs enough spend per ad set to get statistically meaningful data on each creative.
+    </div>
+  </div>
+
+  <!-- Transition 3: A to C -->
+  <div class="transition-card">
+    <div class="trans-header">
+      <span class="trans-from trans-from-a">Strategy A: CBO</span>
+      <span class="trans-arrow">>>></span>
+      <span class="trans-to trans-to-c">Strategy C: Thunderdome</span>
+    </div>
+    <div class="trans-body">
+      <strong>When this transition fires:</strong> The client has scaled from low spend to $1K+/day rapidly and needs to test creatives aggressively without going through the intermediate ABO phase. This happens when a client gets funded or decides to scale hard and skips the gradual ramp.
+    </div>
+    <div class="trans-signal">
+      <strong>Trigger signals:</strong> Spend jumps from under $300/day to $1K+/day in a single budget increase. The client wants to test a high volume of creatives fast. No proven winners yet because the CBO phase was too short to identify them.
+    </div>
+    <div class="trans-body" style="margin-top:12px;"><strong>Steps to execute:</strong></div>
+    <ul class="trans-steps">
+      <li>Pause the CBO campaign or let it run alongside Thunderdome if it was producing</li>
+      <li>Build Thunderdome with 15-30+ ad sets at 1 ad each, forced distribution, broad targeting</li>
+      <li>Load every creative you have. This is the rapid testing phase</li>
+      <li>Set 3-second view exclusions so prospects rotate through creatives</li>
+      <li>Run for 7 days minimum before cutting anything. You need enough data per creative</li>
+      <li>Once winners emerge, pull them into a new ABO scaling campaign with the Strategy B structure</li>
+      <li>Keep Thunderdome running to feed new creatives into the pipeline</li>
+    </ul>
+    <div class="trans-warning">
+      <strong>Do not:</strong> Skip the data collection entirely. Even in a rapid scale scenario, you need 7 days of Thunderdome data before you can identify winners. Do not cut creatives before they have had enough spend to read.
+    </div>
+  </div>
+
+  <!-- Transition 4: A to $100-$300 ABO -->
+  <div class="transition-card">
+    <div class="trans-header">
+      <span class="trans-from trans-from-a">Strategy A: CBO (under $100/day)</span>
+      <span class="trans-arrow">>>></span>
+      <span class="trans-to trans-to-b">CBO or ABO ($100-$300/day)</span>
+    </div>
+    <div class="trans-body">
+      <strong>When this transition fires:</strong> The client has crossed the $100/day threshold. Above $100/day, you are past the borderline stage where splitting was not viable. Now each ad set gets enough budget to read data independently. The client can now split between multiple ad sets and use ABO.
+    </div>
+    <div class="trans-signal">
+      <strong>Trigger signals:</strong> Daily spend sustained above $100/day for 7+ days. The CBO campaign has identified which targeting angles perform best. The client wants to test multiple ad sets or gain more control over budget distribution.
+    </div>
+    <div class="trans-body" style="margin-top:12px;"><strong>Steps to execute:</strong></div>
+    <ul class="trans-steps">
+      <li>If staying on CBO: simply add a second ad set to the existing CBO campaign. The platform will distribute budget between them. This is safe because you are adding to CBO, which auto-distributes</li>
+      <li>If moving to ABO: build a new campaign. Do not convert the CBO campaign to ABO by changing settings. Start fresh</li>
+      <li>For ABO, build 2-3 ad sets: broad, interest stack, and optionally lookalike if you have purchaser data</li>
+      <li>Set ad set budgets so each gets $50-150/day minimum. At $200/day with 2 ad sets, each gets $100. At $300/day with 3, each gets $100</li>
+      <li>Dynamic Creative is still optional here. You can run it on CBO or skip it on ABO and use individual ads</li>
+      <li>Let the new structure run 72 hours before judging</li>
+    </ul>
+    <div class="trans-warning">
+      <strong>Do not:</strong> Add a lookalike stack to ABO until you have enough purchaser data for the platform to model from. At $100-$300/day with under 10 conversions/week, stick to broad + interest. Lookalikes come after you have proven buyers.
+    </div>
+  </div>
+
+  <!-- Transition 5: B to B+C -->
+  <div class="transition-card">
+    <div class="trans-header">
+      <span class="trans-from trans-from-b">Strategy B: ABO + Individual</span>
+      <span class="trans-arrow">>>></span>
+      <span class="trans-to trans-to-bc">Strategy B+C: ABO Scale + Thunderdome Test</span>
+    </div>
+    <div class="trans-body">
+      <strong>When this transition fires:</strong> The client has crossed $3K/day and needs both a stable scaling structure and a continuous creative testing pipeline. At this spend, running only ABO means creative fatigue becomes a constant problem because you are burning through winners faster. Thunderdome running alongside ABO solves this.
+    </div>
+    <div class="trans-signal">
+      <strong>Trigger signals:</strong> Spend sustained above $3K/day for 2+ weeks. The ABO campaign is stable and producing calls but creatives are fatiguing faster than you can replace them. The client needs a systematic way to feed new winners into the ABO campaign without disrupting it.
+    </div>
+    <div class="trans-body" style="margin-top:12px;"><strong>Steps to execute:</strong></div>
+    <ul class="trans-steps">
+      <li>Keep the existing ABO scaling campaign running untouched. Do not modify it</li>
+      <li>Build a new Thunderdome campaign with 15-30+ ad sets at 1 ad each, forced distribution, broad targeting</li>
+      <li>Allocate roughly 20-30% of total spend to Thunderdome, 70-80% to the ABO scaling campaign</li>
+      <li>Thunderdome tests new creatives continuously. Judge by leading indicators for 5-7 days</li>
+      <li>When Thunderdome identifies a winner, pull it out and load it as a new ad in the ABO scaling campaign</li>
+      <li>Do not add the winner to the existing ABO ad sets. Relaunch the ad set with the new winner included, or start a new ad set within the ABO campaign</li>
+      <li>Thunderdome becomes a permanent fixture. It is not a one-time test. It runs continuously</li>
+    </ul>
+    <div class="trans-warning">
+      <strong>Do not:</strong> Allocate more than 30% of total spend to Thunderdome at this stage. Thunderdome has self-competition inflation. You want the majority of spend in the stable ABO campaign. Thunderdome is the R&D arm, ABO is the revenue arm.
+    </div>
+  </div>
+
+  <!-- ===== STRATEGY DETAILS ===== -->
+  <h2 class="section-title" style="margin-top:48px;">Strategy Setup Details</h2>
+  <p class="section-sub">Click any outcome box in the flowchart above to jump to its setup spec.</p>
+
+  <!-- STRATEGY A -->
+  <div class="strategy-card strategy-a" id="strat-a">
+    <h3>Strategy A: CBO (Dynamic Creative Optional)</h3>
+    <p class="when-to-use"><strong>When to use:</strong> Clients spending $30/day through $300/day. Dynamic Creative is an optional add-on, not a mandatory pairing. You can run CBO with individual ads or with Dynamic Creative enabled. The choice depends on whether you want the platform to mix and match combinations (Dynamic Creative) or whether you want to control which specific ads run (individual ads).</p>
+
+    <div class="spec-grid">
+      <div class="spec-item"><div class="spec-label">Campaign Type</div><div class="spec-value">CBO (Campaign Budget Optimization)</div></div>
+      <div class="spec-item"><div class="spec-label">Ad Sets</div><div class="spec-value">1-3 broad audience ad sets (tier dependent)</div></div>
+      <div class="spec-item"><div class="spec-label">Creative Format</div><div class="spec-value">Individual ads OR Dynamic Creative (optional)</div></div>
+      <div class="spec-item"><div class="spec-label">DC Load (if enabled)</div><div class="spec-value">3-5 videos, 5 headlines, 5 body copy</div></div>
+      <div class="spec-item"><div class="spec-label">Individual Load (if DC off)</div><div class="spec-value">5-10 individual ads per ad set</div></div>
+      <div class="spec-item"><div class="spec-label">Targeting</div><div class="spec-value">Broad (age + geo only) or stacked interest</div></div>
+    </div>
+
+    <div class="dc-addon-box">
+      <h4>Dynamic Creative: Add or Skip?</h4>
+      <p><strong>Add it when:</strong> You are in data collection mode and want the platform to find winning combinations for you. Dynamic Creative maximizes testing throughput from a single ad set. Load 3-5 videos, 5 headlines, 5 body copy and let the algorithm mix and match.</p>
+      <p style="margin-top:8px;"><strong>Skip it when:</strong> You have proven creatives and want to control which specific ads run. Or when platform trust is low and you do not want auto-enhancement toggles altering your creative. Use individual ads instead and keep all enhancement toggles off.</p>
+    </div>
+
+    <ul class="setup-list">
+      <li>At $30-$50/day: one campaign, one broad ad set, Dynamic Creative optional. This is the only structure that gives the algorithm enough signal at that spend level</li>
+      <li>At under $100/day: same structure. $100/day is the minimum viable spend for a single campaign</li>
+      <li>At $100-$300/day: you can now split to 2-3 ad sets. CBO handles distribution between them. ABO becomes available as an alternative</li>
+      <li>If using Dynamic Creative: mix majority and minority hooks so the algorithm can find what resonates</li>
+      <li>Keep all Advantage+ creative enhancement toggles OFF. Auto-enhancements convert worse</li>
+      <li>Let it run a minimum of 72 hours before making any changes</li>
+      <li>Once the platform identifies 1-3 winning combinations, survey buyers and talk to the sales team to extract real buying reasons</li>
+      <li>Transition to Strategy B once you have identified distinct audience pockets with proven hooks and conversion volume hits 10+ per week</li>
+    </ul>
+
+    <div class="warning-box">
+      <strong>CSM Watchout:</strong> At $30-$50/day, 30 days is $900-$1500/month. That is a tiny test budget. It takes weeks to accumulate enough data to make decisions. Do not let the client panic and start tweaking after 2 days. Set expectations on timeline before they start.
+    </div>
+  </div>
+
+  <!-- STRATEGY B -->
+  <div class="strategy-card strategy-b" id="strat-b">
+    <h3>Strategy B: ABO + Individual Ads</h3>
+    <p class="when-to-use"><strong>When to use:</strong> Clients spending $300-$1K/day with 10+ weekly conversions and proven hooks, or $1K-$3K/day in scaling mode. Also available at $100-$300/day if the client has crossed the borderline spend threshold and wants more control over budget distribution. This is the standard scaling structure. You have enough conversion volume to read data, you have proven winners, and you want control over budget distribution rather than letting the platform bias spend to the cheapest result.</p>
+
+    <div class="spec-grid">
+      <div class="spec-item"><div class="spec-label">Campaign Type</div><div class="spec-value">ABO (Ad Set Budget Optimization)</div></div>
+      <div class="spec-item"><div class="spec-label">Cold Ad Sets</div><div class="spec-value">2-3: Broad, Interest Stack, Lookalike Stack</div></div>
+      <div class="spec-item"><div class="spec-label">Ads Per Ad Set</div><div class="spec-value">25-30 individual ads</div></div>
+      <div class="spec-item"><div class="spec-label">Copy Strategy</div><div class="spec-value">Same 5 headlines + 5 body copy across ALL ads</div></div>
+      <div class="spec-item"><div class="spec-label">Warm Campaign</div><div class="spec-value">Separate campaign, warm audience stack</div></div>
+      <div class="spec-item"><div class="spec-label">Bidding</div><div class="spec-value">Cost cap set at target CPA</div></div>
+    </div>
+
+    <ul class="setup-list">
+      <li>Build the cold campaign with 2-3 ad sets: broad (age + geo only), interest stack (detailed targeting relevant to the fitness offer), and lookalike stack (built from purchaser data, only if you have enough buyers)</li>
+      <li>At $100-$300/day: start with 2 ad sets (broad + interest). Add lookalike only when you have purchaser data</li>
+      <li>At $1K-$3K/day: full 3 ad set structure plus a separate warm campaign</li>
+      <li>Load 25-30 unique ads per ad set. Same 5 headlines and 5 body copy across every single ad. The creative itself is what varies</li>
+      <li>Duplicate the first ad set to create the other two so all have identical ads</li>
+      <li>Apply cost caps at the ad set level. For CBO campaigns, switch from Maximize Volume to Cost Per Result Goal</li>
+      <li>The platform will funnel spend to 1-3 ads per ad set. That is normal. Do not panic and do not tweak while scaling</li>
+      <li>When an ad fatigues, relaunch the ad set, not the campaign. Strip out the fatigued winners so the remaining ads get distribution</li>
+      <li>Never add creatives, targeting, or placements to an existing campaign that already has reach. Adding breaks it. Removing is safe</li>
+      <li>The creative testing campaign becomes the scale campaign. You do not need a separate scale campaign unless running Thunderdome alongside</li>
+    </ul>
+
+    <div class="warning-box">
+      <strong>CSM Watchout:</strong> If the client is spending $1K+/day but still getting under 10 conversions per week, they do not have enough signal for ABO. Keep them on CBO until conversion volume improves. ABO with insufficient data just fragments budget and starves every ad set.
+    </div>
+  </div>
+
+  <!-- STRATEGY C -->
+  <div class="strategy-card strategy-c" id="strat-c">
+    <h3>Strategy C: Thunderdome</h3>
+    <p class="when-to-use"><strong>When to use:</strong> Clients spending $1K+/day who need rapid creative testing, or any scaling account that needs to cycle through a high volume of creatives to find new winners fast. Thunderdome forces even spend distribution across every creative so you can read exactly how each one performs, then cut losers aggressively and turn winners into scaling assets.</p>
+
+    <div class="spec-grid">
+      <div class="spec-item"><div class="spec-label">Campaign Type</div><div class="spec-value">ABO (each ad set gets equal budget)</div></div>
+      <div class="spec-item"><div class="spec-label">Structure</div><div class="spec-value">1 ad per ad set, forced distribution</div></div>
+      <div class="spec-item"><div class="spec-label">Ad Set Count</div><div class="spec-value">15-30+ ad sets (one per creative)</div></div>
+      <div class="spec-item"><div class="spec-label">Targeting</div><div class="spec-value">Broad across all ad sets (identical)</div></div>
+      <div class="spec-item"><div class="spec-label">Exclusion</div><div class="spec-value">3-second video view exclusion per ad</div></div>
+      <div class="spec-item"><div class="spec-label">Bidding</div><div class="spec-value">Cost cap or bid cap at target</div></div>
+    </div>
+
+    <ul class="setup-list">
+      <li>Each creative gets its own ad set with its own budget. Forces even spend across every creative instead of biasing to 1-3 winners</li>
+      <li>Set 3-second video view exclusion on each ad so once someone sees one creative, they get served a different one</li>
+      <li>Use different testimonials and angles across creatives so retargeted prospects see fresh reasons to convert</li>
+      <li>Judge by leading indicators first: CPMs, link CTR, cost per call, call quantity. Then correlate to ROAS</li>
+      <li>Clip losers fast. Any creative above your cost threshold gets cut within 5-7 days</li>
+      <li>Move spend from cut losers toward winners to test their scale ceiling</li>
+      <li>Turn proven winners into scaling assets. Pull them out and load them into an ABO scaling campaign</li>
+      <li>For $3K+/day, run Thunderdome and ABO in parallel. Thunderdome feeds new winners, ABO scales the proven ones</li>
+    </ul>
+
+    <div class="warning-box">
+      <strong>CSM Watchout:</strong> Thunderdome creates self-competition because your ad sets compete against each other in the auction. That causes some cost inflation. But you still see cheaper cost per result overall because you are isolating and fragmenting smaller budgets across many ad sets, and you get clean per-creative data you cannot get any other way. Do not run Thunderdome below $1K/day.
+    </div>
+  </div>
+
+  <!-- ===== TRUST MODIFIER ===== -->
+  <div class="trust-box">
+    <h4>Platform Trust Modifier: Override the Decision Tree When Trust Drops</h4>
+    <p style="font-size:12px;color:#777;margin-bottom:16px;">Regardless of what the decision tree recommends, if platform trust is low, switch to maximum control settings. Reassess weekly.</p>
+    <div class="trust-cols">
+      <div class="trust-col high">
+        <h5>High Trust Period</h5>
+        <p>Stable platform, no major algorithm changes, no new auto-enabled toggles, no inflationary windows (holidays, Q4 surges).</p>
+        <p style="margin-top:8px;"><strong>Settings:</strong> Automated bidding permitted. CBO permitted. Dynamic Creative permitted. Automated placements permitted. Platform toggles can stay on.</p>
+      </div>
+      <div class="trust-col low">
+        <h5>Low Trust Period</h5>
+        <p>Major algorithm rollout, new auto-enabled toggles that alter creative or destinations, inflationary windows like holidays, platform rep pushing settings that conflict with cost control.</p>
+        <p style="margin-top:8px;"><strong>Settings:</strong> Cost caps on every campaign. ABO only, no CBO. Individual ads only, no Dynamic Creative. Manual placement review. All enhancement and destination-optimization toggles OFF. Full sweep of every ad before publishing.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== CHEAT SHEET ===== -->
+  <h2 class="section-title" style="margin-top:48px;">Quick Reference Cheat Sheet</h2>
+  <p class="section-sub">For fast recall on calls. Spend tier maps to default strategy. Conversion volume and testing phase can override.</p>
+
+  <div class="cheat-grid">
+    <div class="cheat-card" style="border-left:3px solid #1a5c1a;">
+      <div class="cheat-header"><span class="cheat-tier">$30 - $50/day</span></div>
+      <div class="cheat-strat" style="color:#4ade80;">Strategy A: CBO</div>
+      <div class="cheat-body"><strong>Ad sets:</strong> 1 broad.<br><strong>Dynamic Creative:</strong> Optional add-on.<br><strong>Why:</strong> Budget too thin to split. One campaign, one ad set. Let the platform find winners.<br><strong>Patience:</strong> $30/day = $900/month. Tiny test budget. Weeks to accumulate data.</div>
+    </div>
+    <div class="cheat-card" style="border-left:3px solid #1a5c1a;">
+      <div class="cheat-header"><span class="cheat-tier">Under $100/day</span></div>
+      <div class="cheat-strat" style="color:#4ade80;">Strategy A: CBO</div>
+      <div class="cheat-body"><strong>Ad sets:</strong> 1 (default).<br><strong>Dynamic Creative:</strong> Optional.<br><strong>$100/day is the floor.</strong> Below that, pure data acquisition. Do not fragment.<br><strong>Override:</strong> None at this spend level.</div>
+    </div>
+    <div class="cheat-card" style="border-left:3px solid #5b1a8a;">
+      <div class="cheat-header"><span class="cheat-tier">$100 - $300/day</span></div>
+      <div class="cheat-strat" style="color:#c084fc;">Strategy A or B: CBO or ABO (splitting now available)</div>
+      <div class="cheat-body"><strong>Ad sets:</strong> 2-3. Splitting now viable.<br><strong>Under 10 convos/week:</strong> CBO with 2-3 ad sets.<br><strong>10+ convos/week:</strong> ABO with 2-3 ad sets for budget control.<br><strong>Dynamic Creative:</strong> Optional in either setup.<br><strong>Why this tier exists:</strong> Above $100/day you are past the borderline. Each ad set gets enough budget to read independently.</div>
+    </div>
+    <div class="cheat-card" style="border-left:3px solid #5b1a8a;">
+      <div class="cheat-header"><span class="cheat-tier">$300 - $1K/day</span></div>
+      <div class="cheat-strat" style="color:#c084fc;">Strategy A or B (transition zone)</div>
+      <div class="cheat-body"><strong>Ad sets:</strong> 2 (under 10 convos) or 3 (10+ convos).<br><strong>Under 10 convos/week:</strong> Stay on CBO.<br><strong>10+ convos/week + proven hooks:</strong> Move to ABO + Individual.<br><strong>Still testing:</strong> Stay on CBO until hooks proven.<br><strong>Tiebreaker:</strong> Conversion volume, not spend.</div>
+    </div>
+    <div class="cheat-card" style="border-left:3px solid #1a4a8a;">
+      <div class="cheat-header"><span class="cheat-tier">$1K - $3K/day</span></div>
+      <div class="cheat-strat" style="color:#60a5fa;">Strategy B: ABO + Individual (or Thunderdome for testing)</div>
+      <div class="cheat-body"><strong>Ad sets:</strong> 3 cold + separate warm campaign.<br><strong>Scaling:</strong> ABO + Individual. 25-30 ads per ad set, cost caps.<br><strong>Testing:</strong> Thunderdome. 15-30+ ad sets at 1 ad each.<br><strong>Override:</strong> Under 10 convos/week, drop back to CBO.</div>
+    </div>
+    <div class="cheat-card" style="border-left:3px solid #8a1a1a;">
+      <div class="cheat-header"><span class="cheat-tier">$3K+/day</span></div>
+      <div class="cheat-strat" style="color:#f87171;">Strategy B+C: ABO Scale + Thunderdome Test</div>
+      <div class="cheat-body"><strong>Ad sets:</strong> 3+ per ABO campaign + 15-30+ in Thunderdome.<br><strong>Scaling:</strong> ABO + Individual for proven winners.<br><strong>Testing:</strong> Thunderdome in parallel, feeds new creatives.<br><strong>Spend split:</strong> ~70-80% ABO, ~20-30% Thunderdome.<br><strong>Override:</strong> Low trust = force ABO + cost caps + individual ads.</div>
+    </div>
+  </div>
+
+  <!-- ===== DECISION RULES ===== -->
+  <h2 class="section-title" style="margin-top:48px;">Core Decision Rules for CSMs</h2>
+  <p class="section-sub">These rules override the flowchart when edge cases come up on calls.</p>
+
+  <div class="cheat-grid">
+    <div class="cheat-card"><div class="cheat-strat" style="font-size:14px;">Rule 1: Conversion Volume Beats Spend</div><div class="cheat-body">If a client is spending $1K/day but only getting 5 conversions a week, they do not have enough signal for ABO or Thunderdome. Keep them on CBO until conversion volume hits 10+ per week. Spend alone does not unlock advanced structures. Data does.</div></div>
+    <div class="cheat-card"><div class="cheat-strat" style="font-size:14px;">Rule 2: Never Add to a Working Campaign</div><div class="cheat-body">You can remove things from an existing campaign without issue. But adding creatives, targeting, or placements to a campaign that already has reach and performance will break it. If the client needs new creatives, relaunch the ad set or start a new campaign.</div></div>
+    <div class="cheat-card"><div class="cheat-strat" style="font-size:14px;">Rule 3: 72 Hours Minimum Before Judging</div><div class="cheat-body">No creative decisions before 72 hours of runtime. Two hours is not signal. The only exception is if something is obviously broken: wrong link, rejected tracking, or CPMs completely out of range.</div></div>
+    <div class="cheat-card"><div class="cheat-strat" style="font-size:14px;">Rule 4: Relaunch Ad Sets, Not Campaigns</div><div class="cheat-body">When ads fatigue, relaunch the ad set, not the campaign. Strip out the 1-3 fatigued winners so the remaining ads get distribution. Because you launched with 25-30 ads, there are always other ads ready to rip.</div></div>
+    <div class="cheat-card"><div class="cheat-strat" style="font-size:14px;">Rule 5: Testing Campaign Becomes Scale Campaign</div><div class="cheat-body">You do not need a separate scale campaign. The creative testing campaign converts into the scaling campaign once winners are identified. The only time you run a separate structure is Thunderdome alongside ABO at $3K+/day.</div></div>
+    <div class="cheat-card"><div class="cheat-strat" style="font-size:14px;">Rule 6: Trust Level Overrides Everything</div><div class="cheat-body">If the platform is in a low-trust period, force maximum control regardless of what the tree says: cost caps, ABO, individual ads, manual placements, all toggles off. Reassess weekly.</div></div>
+    <div class="cheat-card"><div class="cheat-strat" style="font-size:14px;">Rule 7: $100/day Is the Splitting Floor</div><div class="cheat-body">Below $100/day, do not split between multiple ad sets. Above $100/day, splitting becomes viable and ABO becomes available. This is the borderline threshold for structural complexity.</div></div>
+    <div class="cheat-card"><div class="cheat-strat" style="font-size:14px;">Rule 8: Lookalikes Need Purchaser Data</div><div class="cheat-body">Do not add a lookalike stack until you have enough purchaser data for the platform to model from. At $100-$300/day with under 10 conversions/week, stick to broad + interest. Lookalikes come after you have proven buyers.</div></div>
+    <div class="cheat-card"><div class="cheat-strat" style="font-size:14px;">Rule 9: Dynamic Creative Is Optional, Not Default</div><div class="cheat-body">Dynamic Creative is an add-on to CBO, not a mandatory pairing. Use it when you want the platform to mix and match. Skip it when you have proven creatives or when platform trust is low. Never use it during low-trust periods.</div></div>
+    <div class="cheat-card"><div class="cheat-strat" style="font-size:14px;">Rule 10: CPA Benchmarks Are Guardrails, Not Targets</div><div class="cheat-body">Use the cost-per-call benchmarks to know when something is off, not to hit a specific number. If CPA climbs but show rate holds, it is auction or fatigue. If CPA climbs and show rate drops, the creative is attracting the wrong people. Diagnose the sub-metric before changing anything.</div></div>
+  </div>
+
+  <!-- ===== AD TESTING & FATIGUE COMBAT ===== -->
+  <h2 class="section-title" style="margin-top:48px;">Ad Testing to Combat Fatigue: By Spend Level</h2>
+  <p class="section-sub">Every campaign will fatigue. The question is not if but when, and whether you have a system to replace winners before the account bleeds. Here is how to test new creatives at each spend level to keep feeding winners into the scaling structure.</p>
+
+  <!-- Fatigue Signals -->
+  <div class="conv-intro" style="margin-bottom:24px;">
+    <h3 style="font-size:16px;">How to Know It Is Time to Test New Creatives</h3>
+    <p>Before you test, you need to know when to test. Ad fatigue is not just frequency getting high. The platform communicates through signals. Here is what to watch for across all spend levels:</p>
+    <div class="spec-grid" style="margin-top:16px;">
+      <div class="spec-item"><div class="spec-label">Cost Per Result</div><div class="spec-value">Climbing over 2+ weeks with no campaign changes. The primary signal.</div></div>
+      <div class="spec-item"><div class="spec-label">CTR (Link Click-Through)</div><div class="spec-value">Dropping. Your creative is losing its ability to stop the scroll.</div></div>
+      <div class="spec-item"><div class="spec-label">Frequency</div><div class="spec-value">Climbing above 2.0 at low reach. The audience has seen the ads too many times.</div></div>
+      <div class="spec-item"><div class="spec-label">Result Volume</div><div class="spec-value">Declining alongside rising cost. Both moving the wrong direction at once.</div></div>
+      <div class="spec-item"><div class="spec-label">CPM</div><div class="spec-value">Inflating with no auction explanation. The platform is charging more for the same audience.</div></div>
+      <div class="spec-item"><div class="spec-label">Call Quality</div><div class="spec-value">Sales team reports leads are less qualified. The creative is attracting the wrong segment.</div></div>
+    </div>
+    <div class="key-point" style="margin-top:16px;">
+      <strong>The rule:</strong> Do not judge fatigue off frequency alone. Frequency climbing is a symptom, not a diagnosis. Judge fatigue off cost per result and result volume moving together. If cost is climbing but volume is holding, you may have audience fatigue, not ad fatigue. Run the ad fatigue protocol first: relaunch with fresh creatives. If cost does not recover after the relaunch, you have audience fatigue and need to expand your audience, not just swap creatives.
+    </div>
+  </div>
+
+  <!-- Ad Fatigue Protocol -->
+  <div class="conv-intro" style="margin-bottom:24px;">
+    <h3 style="font-size:16px;">The Ad Fatigue Protocol (Applies at Every Spend Level)</h3>
+    <p>Before diving into spend-specific testing approaches, here is the universal protocol. Every level uses a version of this. The only thing that changes by spend level is how many creatives you test and whether you run the test inside the existing campaign or in a separate one.</p>
+    <ul class="setup-list" style="margin-top:16px;">
+      <li>Duplicate the fatigued campaign or ad set. Do not edit the live one</li>
+      <li>Go to the ad level of the duplicated campaign</li>
+      <li>Pull out the fatigued videos or images</li>
+      <li>Put in fresh creatives from your surplus. New hooks, new angles, new testimonials</li>
+      <li>Press publish. Once approved, turn the old campaign off</li>
+      <li>Do not run both the old and new campaign at the same time. That splits your audience and your budget</li>
+      <li>After the fresh campaign launches, give it 72 hours before judging. Do not compare hour-one of the new campaign against the fatigued campaign's last week</li>
+    </ul>
+    <div class="warning-box" style="margin-top:16px;">
+      <strong>Why duplicate, not edit:</strong> If you edit the live campaign, the platform resets the learning phase. You lose the accumulated audience data and the algorithm starts from scratch. Duplicating preserves the original as a backup and gives the new campaign a clean start without disrupting the old one's data.
+    </div>
+  </div>
+
+  <!-- Testing Table by Spend Level -->
+  <h3 style="font-size:16px;font-weight:700;color:#fff;margin-bottom:16px;">Testing Approach by Spend Level</h3>
+  <p style="font-size:13px;color:#777;margin-bottom:20px;">The bigger the budget, the more you can test. The lower the budget, the less you can test. At every level, the principle is the same: have a creative surplus ready, test within the structure that matches your spend, and feed winners into your scaling campaign.</p>
+
+  <div class="tier-table-wrap" style="margin-bottom:24px;">
+    <table class="tier-table">
+      <thead>
+        <tr>
+          <th>Daily Spend</th>
+          <th>Creatives to Test</th>
+          <th>How to Test</th>
+          <th>When to Refresh</th>
+          <th>Timeline to Fatigue</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="tier-label">$30/day</td>
+          <td>1-3 creatives per batch</td>
+          <td>One ad set, load 3-5 ads. The platform will find 1-3 winners. Keep them live. When they fatigue, relaunch the ad set with new creatives. Do not run a parallel test campaign at this spend level. You do not have enough budget.</td>
+          <td>When cost per result climbs 30%+ above baseline for 5+ days straight</td>
+          <td>2-4 weeks depending on audience size. Small audiences fatigue faster.</td>
+        </tr>
+        <tr>
+          <td class="tier-label">$50/day</td>
+          <td>3-5 creatives per batch</td>
+          <td>Same as $30/day. One ad set, load 3-5 ads. The platform picks 1-3 winners. Relaunch the ad set when they fatigue. No parallel test campaign at this spend.</td>
+          <td>When cost per result climbs 30%+ above baseline for 5+ days, or CTR drops 40%+ from peak</td>
+          <td>2-4 weeks. Same as $30/day. The audience is the same, you just have slightly more budget per creative.</td>
+        </tr>
+        <tr>
+          <td class="tier-label">Under $100/day</td>
+          <td>5-10 creatives per batch</td>
+          <td>Still one campaign, one ad set (or two if testing a distinct angle). Load 5-10 ads. The platform finds 1-3 winners. Relaunch the ad set with fresh creatives when they fatigue. At this spend you can justify a second ad set for a different targeting angle, but keep it in the same campaign.</td>
+          <td>When cost per result climbs 25%+ above baseline for 5+ days, or frequency exceeds 2.0 with declining volume</td>
+          <td>2-4 weeks. $100/day is still a thin audience. Fatigue depends more on audience size than spend.</td>
+        </tr>
+        <tr>
+          <td class="tier-label">$100-$300/day</td>
+          <td>10-15 creatives per batch</td>
+          <td>Now you can split. 2-3 ad sets, each with 5-10 ads. If on CBO, the platform distributes. If on ABO, each ad set tests independently. When an ad set fatigues, relaunch that ad set, not the whole campaign. At the higher end ($250-300/day), you can justify a small parallel test campaign for a completely new angle without touching the main campaign.</td>
+          <td>When cost per result climbs 25%+ above baseline for 5+ days on a specific ad set, or CTR drops 30%+ from peak</td>
+          <td>2-3 weeks per ad set. With 2-3 ad sets, they may fatigue at different rates. Refresh each independently.</td>
+        </tr>
+        <tr>
+          <td class="tier-label">$300-$1K/day</td>
+          <td>15-20+ creatives per batch</td>
+          <td>If on ABO: 2-3 ad sets, each with 10-15 ads. Test within each ad set independently. When an ad set fatigues, relaunch it with fresh creatives. At the upper end ($800-1K/day), you can start justifying a Thunderdome-style parallel test campaign. But below $1K/day, Thunderdome is too thin per ad set to read clean data. Stay in the ABO structure and test within it.</td>
+          <td>When cost per result climbs 20%+ above baseline for 5+ days on any ad set, or frequency exceeds 2.5 with declining volume</td>
+          <td>1-3 weeks per ad set depending on audience saturation. Higher spend means faster audience burn-through.</td>
+        </tr>
+        <tr>
+          <td class="tier-label">$1K-$3K/day</td>
+          <td>25-30+ creatives per batch</td>
+          <td>Thunderdome becomes the testing engine. Build a separate Thunderdome campaign with 15-30+ ad sets at 1 ad each, forced distribution, broad targeting, 3-second view exclusions. The ABO scaling campaign runs untouched. Thunderdome tests in parallel. When Thunderdome identifies winners, pull them out and load them into the ABO scaling campaign as new ads. Relaunch Thunderdome with a new batch when the current batch is milked.</td>
+          <td>Thunderdome runs continuously. The ABO scaling campaign refreshes when its ad sets fatigue. Thunderdome feeds new winners into ABO before ABO fatigues.</td>
+          <td>1-2 weeks per creative batch in Thunderdome. The ABO scaling campaign fatigues in 2-3 weeks but Thunderdome is already feeding replacements.</td>
+        </tr>
+        <tr>
+          <td class="tier-label">$3K+/day</td>
+          <td>30+ creatives, continuously</td>
+          <td>Thunderdome runs permanently as a creative factory. 15-30+ ad sets at 1 ad each, forced distribution, broad targeting. ABO scaling campaign with 3+ ad sets runs alongside. ~70-80% of spend in ABO, ~20-30% in Thunderdome. Thunderdome identifies winners, pulls them into ABO. When ABO creatives fatigue, relaunch the ad set with Thunderdome winners already loaded. This is perpetual testing: Thunderdome never stops, ABO scales what it finds.</td>
+          <td>Thunderdome cycles new batches every 1-2 weeks. ABO ad sets refresh every 2-3 weeks. The system runs continuously without manual fatigue crises.</td>
+          <td>1-2 weeks per creative at this spend. High spend burns through audiences fast. But Thunderdome is always ahead of the fatigue curve.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Creative Surplus Principle -->
+  <div class="conv-intro" style="margin-bottom:24px;">
+    <h3 style="font-size:16px;">The Creative Surplus Principle</h3>
+    <p>You do not want to be one of those tweakers who immediately throws new creatives into the algorithm the second they are filmed. You want a surplus ready at all times. The bigger the budget, the more surplus you need. The lower the budget, the less you can test, but you still need a surplus for when fatigue hits.</p>
+    <div class="spec-grid" style="margin-top:16px;">
+      <div class="spec-item"><div class="spec-label">$30-$50/day</div><div class="spec-value">Keep 5-10 untested creatives on the shelf at all times. You test 1-3 at a time. When they fatigue, you have replacements ready.</div></div>
+      <div class="spec-item"><div class="spec-label">Under $100/day</div><div class="spec-value">Keep 10-15 untested creatives ready. You test 5-10 at a time.</div></div>
+      <div class="spec-item"><div class="spec-label">$100-$300/day</div><div class="spec-value">Keep 15-20 untested creatives ready. You test 10-15 at a time across 2-3 ad sets.</div></div>
+      <div class="spec-item"><div class="spec-label">$300-$1K/day</div><div class="spec-value">Keep 20-30 untested creatives ready. You test 15-20+ at a time.</div></div>
+      <div class="spec-item"><div class="spec-label">$1K-$3K/day</div><div class="spec-value">Keep 30-50 untested creatives ready. Thunderdome tests 15-30+ at a time in parallel.</div></div>
+      <div class="spec-item"><div class="spec-label">$3K+/day</div><div class="spec-value">Keep 50+ untested creatives in the pipeline at all times. Thunderdome cycles through them continuously. Film weekly to maintain the surplus.</div></div>
+    </div>
+    <div class="key-point" style="margin-top:16px;">
+      <strong>The rule:</strong> The bigger the budget, the more I can test. The lower the budget, the less I can test. At $30/day you can test far fewer variables than at $3K/day. But the principle is the same at every level: always have a surplus ready before fatigue hits. If you wait until fatigue to film new creatives, you are already late. The creative surplus is your insurance policy against revenue dips.
+    </div>
+  </div>
+
+  <!-- Test to Scale Cycle -->
+  <div class="conv-intro" style="margin-bottom:24px;">
+    <h3 style="font-size:16px;">The Test-to-Scale Cycle</h3>
+    <p>Testing and scaling are not separate phases. They are a cycle. You test, you find winners, you scale, you hit a ceiling, you test again. The goal is to maintain account consolidation: spend more money, hit the ceiling, then go back and test again without breaking what is working.</p>
+    <ul class="setup-list" style="margin-top:16px;">
+      <li><strong>Phase 1: Test.</strong> Load a batch of creatives into your testing structure (at low spend, this is the same campaign. At high spend, this is Thunderdome). Give it 72 hours minimum to read data. Let the platform find 1-3 winners</li>
+      <li><strong>Phase 2: Identify.</strong> Once the platform has spent enough to show you which 1-3 ads are absorbing the spend and producing results, those are your winners. Do not tweak them. Do not touch them. Let them run</li>
+      <li><strong>Phase 3: Scale.</strong> Increase budget on the winners. If on CBO, raise the campaign budget. If on ABO, raise the ad set budgets. Scale aggressively but watch for the ceiling</li>
+      <li><strong>Phase 4: Hit the ceiling.</strong> Eventually the audience saturates. Cost per result climbs. Volume drops. This is the ceiling. Do not keep scaling past it. Pull back spend to the last profitable level</li>
+      <li><strong>Phase 5: Test again.</strong> Go back to Phase 1 with a fresh batch of creatives. The testing campaign becomes the scaling campaign. You do not need a separate scale campaign unless you are running Thunderdome alongside ABO at $3K+/day</li>
+    </ul>
+    <div class="key-point" style="margin-top:16px;">
+      <strong>The key insight:</strong> Once you stop testing and the campaign becomes solely an accumulation of winning ad sets, your costs fall. The winners accumulate at a lower conversion cost than the losers. That is why your losers are losers. The more you test losers, the higher your costs seem. Once you stop spending on losers and let the winners run, costs drop. But then the winners fatigue, and you need to test again. That is the cycle.
+    </div>
+  </div>
+
+  <!-- How to Feed Winners into Scale -->
+  <div class="conv-intro" style="margin-bottom:24px;">
+    <h3 style="font-size:16px;">How to Feed Winners from Test to Scale</h3>
+    <p>Once your testing structure identifies winners, here is how to move them into the scaling structure without breaking what is already working. The approach differs by spend level:</p>
+    <div class="spec-grid" style="margin-top:16px;">
+      <div class="spec-item"><div class="spec-label">$30-$300/day</div><div class="spec-value">The test campaign IS the scale campaign. Once the platform finds 1-3 winners, simply raise the budget on that campaign. Do not build a separate scale campaign. The winners are already running. Just feed them more budget.</div></div>
+      <div class="spec-item"><div class="spec-label">$300-$1K/day</div><div class="spec-value">Same logic. The ABO testing campaign becomes the scaling campaign. Once winners are identified and you are past the testing phase, raise ad set budgets. Do not start a new campaign. The winners are already in the structure that found them.</div></div>
+      <div class="spec-item"><div class="spec-label">$1K-$3K/day</div><div class="spec-value">Thunderdome finds the winners. Pull the winning creatives out of Thunderdome and load them as new ads in the ABO scaling campaign. Do not add them to existing ABO ad sets. Either relaunch the ABO ad set with the new winner included, or create a new ad set within the ABO campaign for the winner.</div></div>
+      <div class="spec-item"><div class="spec-label">$3K+/day</div><div class="spec-value">Thunderdome runs permanently and feeds winners into ABO continuously. When an ABO ad set fatigues, relaunch it with Thunderdome winners already loaded. The system is self-sustaining: Thunderdome tests, ABO scales, Thunderdome replaces ABO's fatigued creatives.</div></div>
+    </div>
+    <div class="warning-box" style="margin-top:16px;">
+      <strong>Do not add to a working campaign.</strong> You can remove things from an existing campaign without issue. But adding creatives, targeting, or placements to a campaign that already has reach and performance will break it. If you need to add new winners to an ABO campaign, relaunch the ad set with the new winner included. Do not just drop new ads into the live ad set.
+    </div>
+  </div>
+
+  <!-- Testing Triggers by Spend -->
+  <h3 style="font-size:16px;font-weight:700;color:#fff;margin-bottom:16px;">When to Trigger a Test Batch at Each Level</h3>
+  <p style="font-size:13px;color:#777;margin-bottom:20px;">Do not test on a schedule. Test when the data tells you to. Here are the specific triggers at each spend level that say it is time to load a new batch of creatives.</p>
+
+  <div class="cheat-grid">
+    <div class="cheat-card" style="border-left:3px solid #1a5c1a;">
+      <div class="cheat-header"><span class="cheat-tier">$30-$50/day</span></div>
+      <div class="cheat-strat" style="font-size:14px;color:#4ade80;">Slow Burn Testing</div>
+      <div class="cheat-body"><strong>Trigger:</strong> Cost per result climbs 30%+ above baseline for 5+ days.<br><strong>Action:</strong> Relaunch the ad set with 3-5 fresh creatives from your surplus.<br><strong>Cadence:</strong> Expect to refresh every 2-4 weeks.<br><strong>Do not:</strong> Test in parallel. You do not have enough budget for a separate test campaign. Test within the one campaign you have.</div>
+    </div>
+    <div class="cheat-card" style="border-left:3px solid #1a5c1a;">
+      <div class="cheat-header"><span class="cheat-tier">Under $100/day</span></div>
+      <div class="cheat-strat" style="font-size:14px;color:#4ade80;">Single Campaign Testing</div>
+      <div class="cheat-body"><strong>Trigger:</strong> Cost per result climbs 25%+ above baseline for 5+ days, or CTR drops 40%+ from peak.<br><strong>Action:</strong> Relaunch the ad set with 5-10 fresh creatives.<br><strong>Cadence:</strong> Expect to refresh every 2-4 weeks.<br><strong>Do not:</strong> Split into a parallel test campaign. Stay consolidated.</div>
+    </div>
+    <div class="cheat-card" style="border-left:3px solid #5b1a8a;">
+      <div class="cheat-header"><span class="cheat-tier">$100-$300/day</span></div>
+      <div class="cheat-strat" style="font-size:14px;color:#c084fc;">Multi Ad Set Testing</div>
+      <div class="cheat-body"><strong>Trigger:</strong> Cost per result climbs 25%+ above baseline for 5+ days on a specific ad set, or CTR drops 30%+ from peak.<br><strong>Action:</strong> Relaunch the fatigued ad set with 5-10 fresh creatives. Leave the other ad sets alone if they are still performing.<br><strong>Cadence:</strong> Each ad set may fatigue at a different rate. Refresh independently.<br><strong>Option:</strong> At $250-300/day, you can justify a small parallel test campaign for a new angle.</div>
+    </div>
+    <div class="cheat-card" style="border-left:3px solid #1a4a8a;">
+      <div class="cheat-header"><span class="cheat-tier">$300-$1K/day</span></div>
+      <div class="cheat-strat" style="font-size:14px;color:#60a5fa;">ABO Testing with Thunderdome Approaching</div>
+      <div class="cheat-body"><strong>Trigger:</strong> Cost per result climbs 20%+ above baseline for 5+ days on any ad set, or frequency exceeds 2.5 with declining volume.<br><strong>Action:</strong> Relaunch the fatigued ad set with 10-15 fresh creatives. At $800-1K/day, start building toward Thunderdome.<br><strong>Cadence:</strong> 1-3 weeks per ad set. Higher spend burns through audiences faster.<br><strong>Do not:</strong> Run full Thunderdome below $1K/day. The budget per ad set is too thin to read clean data.</div>
+    </div>
+    <div class="cheat-card" style="border-left:3px solid #8a1a1a;">
+      <div class="cheat-header"><span class="cheat-tier">$1K-$3K/day</span></div>
+      <div class="cheat-strat" style="font-size:14px;color:#f87171;">Thunderdome Testing Engine</div>
+      <div class="cheat-body"><strong>Trigger:</strong> Thunderdome runs continuously. No trigger needed. It is always testing.<br><strong>Action:</strong> Thunderdome tests 15-30+ creatives in forced distribution. Pull winners into ABO. Relaunch Thunderdome with a new batch when the current one is milked.<br><strong>Cadence:</strong> 1-2 weeks per Thunderdome batch. ABO ad sets refresh every 2-3 weeks from Thunderdome-fed winners.<br><strong>The system:</strong> ABO is your revenue engine. Thunderdome is your R&D engine. They run in parallel.</div>
+    </div>
+    <div class="cheat-card" style="border-left:3px solid #8a1a1a;">
+      <div class="cheat-header"><span class="cheat-tier">$3K+/day</span></div>
+      <div class="cheat-strat" style="font-size:14px;color:#f87171;">Perpetual Thunderdome</div>
+      <div class="cheat-body"><strong>Trigger:</strong> Thunderdome never stops. No trigger needed.<br><strong>Action:</strong> Thunderdome cycles 30+ creatives continuously. Winners get pulled into ABO. ABO ad sets get refreshed before they fatigue. The system is self-sustaining.<br><strong>Cadence:</strong> 1-2 weeks per creative at this spend. High spend burns through audiences fast.<br><strong>The system:</strong> ~70-80% of spend in ABO scaling. ~20-30% in Thunderdome testing. Film weekly to maintain the surplus.</div>
+    </div>
+  </div>
+
+  <!-- Warning: Testing at the Wrong Level -->
+  <div class="trust-box" style="border-left-color:#8a1a1a;">
+    <h4 style="color:#f87171;">Common Testing Mistakes by Spend Level</h4>
+    <div class="trust-cols">
+      <div class="trust-col" style="grid-column:1/-1;">
+        <p style="font-size:12px;color:#999;line-height:1.8;">
+        <strong style="color:#f87171;">$30-$50/day:</strong> Do not run a parallel test campaign. You do not have enough budget. Test within the one campaign you have.<br><br>
+        <strong style="color:#f87171;">Under $100/day:</strong> Do not split into multiple ad sets for testing. Stay consolidated in one ad set. The budget is too thin to read data across multiple ad sets.<br><br>
+        <strong style="color:#f87171;">$100-$300/day:</strong> Do not add creatives to a working ad set to test. Relaunch the ad set with new creatives. Adding breaks the performance.<br><br>
+        <strong style="color:#f87171;">$300-$1K/day:</strong> Do not run full Thunderdome below $1K/day. The budget per ad set is too thin. Each ad set at 15-30 would only get $10-30/day. Not enough signal to read.<br><br>
+        <strong style="color:#f87171;">$1K-$3K/day:</strong> Do not stop Thunderdome once it finds winners. Thunderdome runs continuously. It is not a one-time test. It is a permanent creative factory.<br><br>
+        <strong style="color:#f87171;">$3K+/day:</strong> Do not allocate more than 30% of total spend to Thunderdome. The majority goes to the stable ABO scaling campaign. Thunderdome is the R&D arm, not the revenue arm.
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer-note">
+    Ad Strategy Decision Tree v3 for CSMs | High-Ticket Fitness Offers | Eight spend tiers, Dynamic Creative as optional CBO add-on, cost-per-call benchmarks, full transition protocol, ad testing and fatigue combat by spend level
+  </div>
+
+</div>
+</body>
+</html>
